@@ -1,0 +1,30 @@
+fs_logger("notice","[dialplan/voicemail_generate.lua][XML_STRING] IN Generate Voicemail")
+local sip_collection = mongo_collection_name:getCollection "extensions"
+local query = { uuid = did_routing_uuid, status = '0',tenant_uuid = caller_tenant_uuid }
+local projection = { username = true, type = true, time_out = true, _id = false }
+local cursor = sip_collection:find(query, { projection = projection })
+local sip_array = ''
+for sip_details in cursor:iterator() do
+	sip_array = sip_details;
+end
+if(sip_array == '')then
+	fs_logger("warning","[dialplan/voicemail_generate.lua:: Sip Device not found for voicemail::")
+	local sip_from_user = params:getHeader("variable_sip_from_user")
+	hangup_cause = "NO_ROUTE_DESTINATION";
+	fail_audio_file = sounds_dir..'/pbx/badnumber.wav';
+	fs_logger("warning","[common/index.lua:: DID Routing Not Set")
+	dofile(scripts_dir .. "dialplan/fail_xml_dialplan.lua");
+	return true;
+
+end
+local sip_username = sip_array.username
+header_xml();
+callerid_xml();
+table.insert(xml, [[<condition field="${cond(${user_data ]]..sip_username..[[@]]..from_domain..[[ param vm-enabled} == true ? YES : NO)}" expression="^YES$">]])
+table.insert(xml, [[<action application="answer"/>]]);    
+table.insert(xml, [[<action application="set" data="voicemail_alternate_greet_id=]]..sip_username..[["/>]]);  
+table.insert(xml, [[<action application="voicemail" data="default ]]..from_domain..[[ ]]..sip_username..[["/>]]);    
+table.insert(xml, [[<anti-action application="hangup" data="${originate_disposition}"/>]])
+table.insert(xml, [[</condition>]])
+
+footer_xml();

@@ -1,0 +1,5 @@
+		local currenttimestamp = os.time()
+		local callstart = os.date("!%Y-%m-%d %H:%M:%S")
+print(currenttimestamp)
+print("+++++++")
+print(callstart)

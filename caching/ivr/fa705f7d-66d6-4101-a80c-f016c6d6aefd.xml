@@ -1,0 +1,9 @@
+<document type="freeswitch/xml">
+<section name="configuration">
+<configuration name="ivr.conf" description="IVR menus">
+<menus><menu name="fa705f7d-66d6-4101-a80c-f016c6d6aefd" greet-long="/opt/caching/upload/${session_language}/8b1cb9cf-1ed2-4e71-8b83-729eb422cc7c.wav" greet-short="" invalid-sound="/opt/caching/upload/${session_language}/72a7985b-0758-46d3-a123-67762d12e177.wav" exit-sound="/opt/caching/upload/${session_language}/34e2c1e5-c458-47e3-93fd-d5093d35d928.wav" timeout="10000" inter-digit-timeout="2000" max-timeouts="1" max-failures="3" digit-len="1">
+<entry action="menu-exec-app" digits="1" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/><entry action="menu-exec-app" digits="2" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/><entry action="menu-exec-app" digits="3" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/><entry action="menu-exec-app" digits="4" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/><entry action="menu-exec-app" digits="5" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/><entry action="menu-exec-app" digits="6" param="ivr e7192405-43bc-4663-8696-842cf9e80a63"/></menu>
+</menus>
+</configuration>
+</section>
+</document>

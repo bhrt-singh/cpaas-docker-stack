@@ -1,0 +1,9 @@
+<configuration name="json_cdr.conf" description="JSON CDR Configuration">
+  <settings>
+    <param name="log-dir" value="/usr/local/freeswitch/log/json_cdr"/>
+    <param name="rotate-on-hup" value="true"/>
+    <param name="enable-cdr-export" value="true"/>
+    <param name="format" value="json"/>
+  </settings>
+</configuration>
+

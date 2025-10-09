@@ -1,0 +1,9 @@
+<document type="freeswitch/xml">
+<section name="configuration">
+<configuration name="ivr.conf" description="IVR menus">
+<menus><menu name="e7192405-43bc-4663-8696-842cf9e80a63" greet-long="/opt/caching/upload/${session_language}/ae4a65ef-54f4-4d72-bf7c-1d85562d787d.wav" greet-short="" invalid-sound="/opt/caching/upload/${session_language}/72a7985b-0758-46d3-a123-67762d12e177.wav" exit-sound="/opt/caching/upload/${session_language}/34e2c1e5-c458-47e3-93fd-d5093d35d928.wav" timeout="10000" inter-digit-timeout="2000" max-timeouts="1" max-failures="3" digit-len="1">
+<entry action="menu-exec-app" digits="0" param="transfer ${original_did_number}#PBX#6#2d595a58-9cff-4d56-954a-901810121d97 XML ${domain_name}"/><entry action="menu-exec-app" digits="9" param="transfer ${original_did_number}#PBX#5#e9a65ab3-7dca-48a6-a5d5-17ff2ce45f47 XML ${domain_name}"/><entry action="menu-exec-app" digits="1" param="transfer 102 XML ${domain_name}"/><entry action="menu-exec-app" digits="2" param="transfer 105 XML ${domain_name}"/></menu>
+</menus>
+</configuration>
+</section>
+</document>

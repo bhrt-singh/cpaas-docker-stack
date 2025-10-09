@@ -1,0 +1,64 @@
+<profile name="external">
+<domains>
+<domain name="$${local_ip_v4}" alias="true" parse="true" />
+</domains>
+<aliases>
+<alias name="xcess.savannafibre.co.ke" /> 
+</aliases>
+<settings>
+<param name='sip-ip' value='102.209.56.253' />
+<param name="sip-port" value='5060' />
+<param name='rtp-ip' value='102.209.56.253' />
+<param name='dialplan' value='XML' />
+<param name='user-agent-string' value='ASTPP' />
+<param name='debug' value='0' />
+<param name='sip-trace' value='no' />
+<param name='tls' value='true' />
+<param name='inbound-reg-force-matching-username' value='true' />
+<param name='disable-transcoding' value='true' />
+<param name='all-reg-options-ping' value='false' />
+<param name='unregister-on-options-fail' value='true' />
+<param name='log-auth-failures' value='true' />
+<param name='status' value='0' />
+<param name='inbound-bypass-media' value='false' />
+<param name='inbound-proxy-media' value='false' />
+<param name='disable-transfer' value='false' />
+<param name='enable-100rel' value='false' />
+<param name='rtp-timeout-sec' value='300' />
+<param name='dtmf-duration' value='2000' />
+<param name='manual-redirect' value='true' />
+<param name='aggressive-nat-detection' value='true' />
+<param name='enable-timer' value='false' />
+<param name='minimum-session-expires' value='120' />
+<param name='session-timeout-pt' value='1800' />
+<param name='auth-calls' value='true' />
+<param name='apply-inbound-acl' value='default' />
+<param name='inbound-codec-prefs' value='PCMA,PCMU' />
+<param name='outbound-codec-prefs' value='PCMA,PCMU' />
+<param name='inbound-late-negotiation' value='false' />
+<param name='sip-capture' value='no' />
+<param name='forward-unsolicited-mwi-notify' value='false' />
+<param name='context' value='default' />
+<param name='rfc2833-pt' value='101' />
+<param name='rtp-timer-name' value='soft' />
+<param name='hold-music' value='$${hold_music}' />
+<param name='manage-presence' value='true' />
+<param name='presence-hosts' value='$${domain},$${local_ip_v4}' />
+<param name='presence-privacy' value='$${presence_privacy}' />
+<param name='inbound-codec-negotiation' value='generous' />
+<param name='auth-all-packets' value='false' />
+<param name='ext-rtp-ip' value='102.209.56.253' />
+<param name='ext-sip-ip' value='102.209.56.253' />
+<param name='rtp-hold-timeout-sec' value='1800' />
+<param name='challenge-realm' value='auto_from' />
+<param name='nonce-ttl' value='60' />
+<param name='pass-callee-id' value='false' />
+<param name='dtmf_type' value='rfc2833' />
+<param name='wss-binding' value=':7443' />
+<param name='tls-cert-dir' value='/usr/local/freeswitch/certs/' />
+<param name='tls-version' value='$${sip_tls_version}' />
+<param name='tls-bind-params' value='transport=tls' />
+</settings>
+<gateways>
+</gateways>
+</profile>

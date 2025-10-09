@@ -1,0 +1,34 @@
+<gateways>
+<gateway name="KenyaPRI">
+<param name="username" value="" />
+<param name="password" value="" />
+<param name="proxy" value="10.70.41.229" />
+<param name="register" value="false" />
+<param name="extension-in-contact" value="false" />
+<param name="caller-id-in-from" value="true" />
+<param name="from-domain" value="10.70.41.229" />
+<param name="auth-username" value="+254709054700@10.70.41.229" />
+<param name="from-user" value="+254709054700" />
+<param name="realm" value="+254709054700@10.70.41.229" />
+<param name="extension" value="+254709054700" />
+<param name="expire-seconds" value="60" />
+<param name="ping" value="0" />
+<param name="retry-seconds" value="0" />
+</gateway>
+<gateway name="KenyaAIRTELPRI">
+<param name="username" value="" />
+<param name="password" value="" />
+<param name="proxy" value="154.79.243.105:5489" />
+<param name="register" value="false" />
+<param name="extension-in-contact" value="false" />
+<param name="caller-id-in-from" value="true" />
+<param name="from-domain" value="154.79.243.105" />
+<param name="auth-username" value="+254730895895@154.79.243.105" />
+<param name="from-user" value="+254730895895" />
+<param name="realm" value="+254730895895@154.79.243.105" />
+<param name="extension" value="+254730895895" />
+<param name="expire-seconds" value="60" />
+<param name="ping" value="0" />
+<param name="retry-seconds" value="0" />
+</gateway>
+</gateways>

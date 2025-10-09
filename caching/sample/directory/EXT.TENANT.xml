@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="freeswitch/xml">
+        <section name="directory">
+                <domain name="#TENANT#" alias="true">
+                        <params>
+                                <param name="jsonrpc-allowed-methods" value="verto"/>
+                                <param name="jsonrpc-allowed-event-channels" value="demo,conference,presence"/>
+                        </params>
+                        <groups>
+                                <group name="default">
+                                        <users>
+                                                <user id="#EXT_USERNAME#">
+                                                        <params>
+                                                                <param name="password" value="#EXT_PASSWORD#"/>
+                                                                <param name="vm-enabled" value="true"/>
+                                                                <param name="dial-string" value="{sip_invite_domain=${domain_name},leg_timeout=${call_timeout},presence_id=${dialed_user}@${dialed_domain}}${sofia_contact(*/${dialed_user}@${dialed_domain})}"/>
+                                                                <param name="verto-context" value="#TENANT#"/>
+                                                                <param name="verto-dialplan" value="XML"/>
+                                                                <param name="jsonrpc-allowed-methods" value="verto"/>
+                                                                <param name="jsonrpc-allowed-event-channels" value="demo,conference,presence"/>
+                                                                <param name="max-registrations-per-extension" value=""/>
+                                                        </params>
+                                                        <variables>
+                                                                <variable name="domain_uuid" value="#TENANT_UUID#"/>
+                                                                <variable name="domain_name" value="#TENANT#"/>
+                                                                <variable name="extension_uuid" value="#EXTENSION_UUID#"/>
+                                                                <variable name="user_uuid" value="#USER_UUID#"/>
+                                                                <variable name="call_timeout" value="30"/>
+                                                                <variable name="caller_id_name" value="#EXT_CID_NAME#"/>
+                                                                <variable name="caller_id_number" value="#EXT_CID_NUMBER#"/>
+                                                                <variable name="presence_id" value="#EXT_USERNAME#@#TENANT#"/>
+                                                                <variable name="call_screen_enabled" value="false"/>
+                                                                <variable name="accountcode" value="#TENANT#"/>
+                                                                <variable name="user_context" value="#TENANT#"/>
+                                                                <variable name="directory-visible" value="true"/>
+                                                                <variable name="directory-exten-visible" value="true"/>
+                                                                <variable name="limit_max" value="5"/>
+                                                                <variable name="limit_destination" value="!USER_BUSY"/>
+                                                                <variable name="record_stereo" value="true"/>
+                                                                <variable name="transfer_fallback_extension" value="operator"/>
+                                                                <variable name="export_vars" value="domain_name,domain_uuid"/>
+                                                        </variables>
+                                                </user>
+                                        </users>
+                                </group>
+                        </groups>
+                </domain>
+        </section>
+</document>
