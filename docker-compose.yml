@@ -3,7 +3,7 @@ services:
 
     mongo:
       container_name: ivr-mongo-container
-      image: unifyxcess/ivr-database-mongo-image:V1.13
+      image: unifyxcess/ivr-database-mongo-image:V1.15
       restart: always
       hostname: mongo1
       network_mode: "host"
