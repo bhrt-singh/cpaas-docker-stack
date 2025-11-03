@@ -1,0 +1,297 @@
+version: '3'
+services:
+
+    mongo:
+      container_name: ivr-mongo-container
+      image: unifyxcess/ivr-database-mongo-image:V1.15
+      restart: always
+      hostname: mongo1
+      network_mode: "host"
+        #ports:
+        # - 27017:27017
+      volumes:
+        - dbdata:/data/db
+        - "/etc/localtime:/etc/localtime:ro"
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+        - MONGO_INITDB_ROOT_PASSWORD=secret
+        - MONGO_INITDB_DATABASE=mydatabase
+          # networks:
+          # - unifyxcess-network
+      # deploy:
+      #   resources:
+      #     limits:
+      #       cpus: 16 # Set CPU limit to 4 cores
+      #       memory: 32G  # Set memory limit to 8 gigabytes
+
+    freeswitch:
+      container_name: ivr-freeswitch-container
+      image: unifyxcess/ivr-freeswitch-image:V1.48
+      privileged: true
+      network_mode: "host"
+      healthcheck:
+        # test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/5060' || exit 1"]
+       test: ["CMD-SHELL", "bash -c '</dev/tcp/192.168.25.4/15060' || exit 1"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+       start_period: 20s  
+      restart: always
+        #ports:
+        # - 5060:5060
+        #- 5080:5080
+        #- 8021:8021
+        #- 10000-60000:10000-60000
+      environment:
+        - MONGO_URI=mongodb://mongoadmin:secret@127.0.0.1:27017/db_pbxcc?authSource=admin
+        - SCRIPTS_DIR=/usr/local/freeswitch/scripts/
+        - SOUNDS_DIR=/usr/local/freeswitch/scripts/audio
+        - UPLOAD_FILE_PATH=/opt/caching/upload/en
+        - SMS_API_URL=https://xcess-internal-cc.local:5000/sms/send 
+        - COMMON_ACCOUNT_NO=A258175
+        - MAX_ACCOUNT_NO_DIGIT=10
+        - LOGGER_FLAG=0
+        - CRM_API_URL=https://216.48.180.92:38125/api/v1
+        - CRM_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcImZpcnN0TmFtZVwiOlwiYWRtaW5cIixcImxhc3ROYW1lXCI6XCJhZG1pblwiLFwidXNlcklkXCI6MixcInBhcnRuZXJJZFwiOjEsXCJyb2xlc0xpc3RcIjpcIjFcIixcInNlcnZpY2VBcmVhSWRcIjpudWxsLFwibXZub0lkXCI6MixcInNlcnZpY2VBcmVhSWRMaXN0XCI6W10sXCJzdGFmZklkXCI6MixcImJ1SWRzXCI6W10sXCJyb2xlSWRzXCI6WzFdLFwidGVhbUlkc1wiOlsxXSxcImFzc2lnbmFibGVSb2xlSWRzXCI6W10sXCJhc3NpZ25hYmxlUm9sZU5hbWVzXCI6W10sXCJtdm5vTmFtZVwiOlwiYWRtaW5cIixcImxjb1wiOmZhbHNlLFwidGVhbXNcIjpbXCJQYXJlbnRUZWFtXCJdfSIsImV4cCI6MTc1Mzc4MDExNX0.d6eweOv3zcHfN4KXUOMIco8qDNqtsmq1TFIvx98ivjY
+      command: >
+         sh -c "mkdir -p /usr/local/freeswitch/conf/autoloadconf &&
+         mkdir -p /usr/local/freeswitch/scripts &&
+         mkdir -p /usr/local/freeswitch/log/json_cdr &&
+         mkdir -p /usr/local/freeswitch/log/json_cdr_archive &&
+         exec freeswitch"
+      volumes:
+        # New Changes ::JEEL::
+        - /root/docker/freeswitch/log:/usr/local/freeswitch/log
+        - /root/docker/freeswitch/log/json_cdr:/usr/local/freeswitch/log/json_cdr
+        - /root/docker/freeswitch/log/json_cdr_archive:/usr/local/freeswitch/log/json_cdr_archive
+        - /root/docker/sounds:/usr/local/freeswitch/sounds
+        - /root/docker/freeswitch/conf/autoload_configs/json_cdr.conf.xml:/usr/local/freeswitch/conf/autoload_configs/json_cdr.conf.xml 
+        - /root/docker/freeswitch/conf/autoload_configs/event_socket.conf.xml:/usr/local/freeswitch/conf/autoload_configs/event_socket.conf.xml
+        - /root/docker/freeswitch/conf/autoload_configs/lua.conf.xml:/usr/local/freeswitch/conf/autoload_configs/lua.conf.xml
+        - /root/docker/freeswitch/scripts:/usr/local/freeswitch/scripts
+        - /root/docker/freeswitch/recordings:/usr/local/freeswitch/recordings
+        - /root/docker/freeswitch/conf/sip_profiles:/usr/local/freeswitch/conf/sip_profiles
+        - /root/docker/freeswitch/conf/autoload_configs/vars.xml:/usr/local/freeswitch/conf/vars.xml
+          #- /home/unified/dockers/docker/freeswitch/scripts:/usr/local/freeswitch/scripts
+        - /root/docker/freeswitch/db:/usr/local/freeswitch/db
+        - /root/docker/token:/usr/local/freeswitch/token  
+        - /opt/caching:/opt/caching
+        - "/etc/localtime:/etc/localtime:ro"
+      #/home/unified/dockers/docker/ssl/:/IVR/ssl"
+        # networks:
+        #- unifyxcess-network
+      # deploy:
+      #   resources:
+      #     limits:
+      #       cpus: "16"
+      #       memory: "32G"      
+ 
+    backend:
+      container_name: ivr-backend-container
+      image: unifyxcess/ivr-backend-image:V1.48
+      restart: always
+      network_mode: "host"
+        #ports:
+        # - 5000:5000
+        #- 8021:8021
+        #- 8089:8089
+      environment:
+        - MONGO_URI=mongodb://mongoadmin:secret@127.0.0.1:27017/db_pbxcc?authSource=admin
+        - NEST_JS_SERVER_PORT=5000
+        - THROTTLE_TTL=60
+        - THROTTLE_LIMIT=100
+        - SECRET_KEY=Inextrix@13
+        - JWT_EXPIRE=24h
+        - BCRYPT_HASH_ROUND=10
+        - SWAGGER_DOCS_PREFIX=api
+        - ENVIRONMENT=development  
+        - FS_HOST=127.0.0.1
+        - FS_PASSWORD=ClueCon
+        - FS_PORT=8021
+        - FS_SCRIPT=/usr/local/freeswitch/scripts/
+        - ALGORITHM=aes-256-cbc
+        - ENCRYPTION_KEY=1234567890abcdefghijklmnopqrstuv
+        - PASSWORD_LENGTH=1234567890abcdef
+        - DOCUMENT_IMAGES_URL=https://lab.test.io:5011/send/
+        - UPLOAD_DIRECTORY=/opt/caching/upload/
+        - CALL_CENTER_DIRECTORY=/opt/caching/callcenter/
+        - SIP_PROFILE_DIRECTORY=/opt/caching/configuration/
+        - EXTENSION_DIRECTORY=/opt/caching/directory/
+        - IVR_DIRECTORY=/opt/caching/ivr/ 
+        - READ_TENANT_XML=/opt/caching/sample/directory/EXT.TENANT.xml
+        - TENANT_PORTAL_PORT=8089
+        - TENANT_PORTAL_DOMAIN=164.52.194.45
+        - key=/app/certs/private-key.pem
+        - cert=/app/certs/certificate.pem
+        - FIREBASE_SERVER_KEY=AAAAtlEQv54:APA91bErLMAaJbu6mfyA1F3SJ1yPbBMFoKMMBYA1BPohTK028Uns-49c4YPX2xyBJ7QfMR26EveapAlo56h3_8Z5PEe8slxbCy4TyFam815RHcPeKxX_DMZshkBXbtADYYx0fKIZRFRF
+        - TZ=Asia/Kolkata
+        - WHMCS_API_URL=https://license.test.io/whmcs/modules/servers/licensing/verify.php
+        - WHMCS_SECRET_KEY=5rRBC7gTZ713aLrIDtRDih1ji5qFEgaz
+        - WHMCS_IDENTIFIER=zXaegfmUjesy8ey629bbwQyBivprbuqx
+        - OPENSIPS=YES
+        - CRM_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcImZpcnN0TmFtZVwiOlwiYWRtaW5cIixcImxhc3ROYW1lXCI6XCJhZG1pblwiLFwidXNlcklkXCI6MixcInBhcnRuZXJJZFwiOjEsXCJyb2xlc0xpc3RcIjpcIjFcIixcInNlcnZpY2VBcmVhSWRcIjpudWxsLFwibXZub0lkXCI6MixcInNlcnZpY2VBcmVhSWRMaXN0XCI6W10sXCJzdGFmZklkXCI6MixcImJ1SWRzXCI6W10sXCJyb2xlSWRzXCI6WzFdLFwidGVhbUlkc1wiOlsxXSxcImFzc2lnbmFibGVSb2xlSWRzXCI6W10sXCJhc3NpZ25hYmxlUm9sZU5hbWVzXCI6W10sXCJtdm5vTmFtZVwiOlwiYWRtaW5cIixcImxjb1wiOmZhbHNlLFwidGVhbXNcIjpbXCJQYXJlbnRUZWFtXCJdfSIsImV4cCI6MTc1Mzc4MDExNX0.d6eweOv3zcHfN4KXUOMIco8qDNqtsmq1TFIvx98ivjY
+      command: >
+          sh -c "mkdir -p /usr/src/new_source/api/upload &&
+          mkdir -p /opt/caching/callcenter &&
+          mkdir -p /opt/caching/configuration &&
+          mkdir -p /opt/caching/directory &&
+          mkdir -p /opt/caching/upload &&
+          mkdir -p /opt/caching/sample/directory &&
+          mkdir -p /opt/caching/ivr &&
+          mkdir -p /opt/caching/configuration/gateways &&
+          npm run start:prod"
+      volumes:
+        - /root/docker/certs:/app/certs
+          # - /root/docker/source/:/usr/src
+        - /root/docker/backend/opt/:/opt
+          # - /root/docker/backend/api/:/usr/src/new_source/api
+         #- /root/docker/backend/directory:/opt/caching/sample/directory
+        - /opt/caching:/opt/caching
+        - /opt/caching/upload/en:/app/upload/en
+        - /opt/caching/upload:/app/upload
+        - /root/docker/token:/app/token
+        - "/etc/localtime:/etc/localtime:ro"
+       #- "/root/docker/ssl/:/IVR/ssl"
+       #networks:
+       # - unifyxcess-network
+      # deploy:
+      #   resources:
+      #     limits:
+      #       cpus: "16"
+      #       memory: "32G"
+
+
+    
+    gui:
+      container_name: ivr-gui-container
+      image: unifyxcess/ivr-frontend-image:V1.115
+      restart: always
+      network_mode: "host"
+        # ports:
+        #- 3000:3000
+        # - 3001:3001
+        # networks:
+        #- unifyxcess-network
+      environment:
+        - NODE_ENV=production
+        - NEXT_PUBLIC_SITE_URL=https://xcess-internal-kn.local:5000
+        - SIDEPANEL_1=Your Unified
+        - SIDEPANEL_2=Communications Platform.
+        - SIDEPANEL_3=Smart Contact Center platform for High performance teams.
+        - FOOTER=Unified Reach, All rights reserved.
+        - TITLE=CALL CENTER
+        - DESCRIPTION=Smart Contact Center platform for High performance teams.
+        - LOGIN=Login to Agent
+        - BASE_URL=https://xcess-internal-kn.local:5000
+        - WSS_URL=wss://xcess-internal-kn.local:7443
+        - CHAT_SOCKET_URL=https://lab.test.io:5002
+        - EXPANDED_LOGO=/assets/images/xcess-expanded-logo.png
+        - COLLAPSED_LOGO=/assets/images/xcess-collapsed-logo.png
+        - DOMAIN_NAME=172.16.20.42
+        - CRM_BASE_API_URL=https://216.48.180.92:38125/api/v1
+        - CRM_RADIUS_API_URL=https://216.48.180.92:38125/AdoptRadius
+        - CRM_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcImZpcnN0TmFtZVwiOlwiYWRtaW5cIixcImxhc3ROYW1lXCI6XCJhZG1pblwiLFwidXNlcklkXCI6MixcInBhcnRuZXJJZFwiOjEsXCJyb2xlc0xpc3RcIjpcIjFcIixcInNlcnZpY2VBcmVhSWRcIjpudWxsLFwibXZub0lkXCI6MixcInNlcnZpY2VBcmVhSWRMaXN0XCI6WzMxLDMyXSxcInN0YWZmSWRcIjoyLFwiYnVJZHNcIjpbXSxcInJvbGVJZHNcIjpbMV0sXCJ0ZWFtSWRzXCI6WzFdLFwiYXNzaWduYWJsZVJvbGVJZHNcIjpbXSxcImFzc2lnbmFibGVSb2xlTmFtZXNcIjpbXSxcIm12bm9OYW1lXCI6XCJhZG1pblwiLFwibGNvXCI6ZmFsc2UsXCJ0ZWFtc1wiOltcIlBhcmVudFRlYW1cIl19IiwiZXhwIjoxNzU0NzE2NDc3fQ.FqvLz2_xGUi197A8B-eIwmRNqEMfLl_cLFUR53_dffM
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+        - /root/docker/token:/app/token
+        #- "/root/docker/ssl/:/certs"
+      # deploy:
+      #   resources:
+      #      limits:
+      #        cpus: 2 # Set CPU limit to 4 cores
+      #        memory: 8G  # Set memory limit to 8 gigabytes
+
+    grafana:
+      container_name: ivr-grafana-container
+      image: unifyxcess/grafana:latest
+      restart: always
+      network_mode: "host"
+      expose:
+        - 3003
+        # ports:
+        # - 3000:3000
+      volumes:
+        # - grafana-storage:/var/lib/grafana
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        #- TZ=Africa/Khartoum
+        - GF_SECURITY_ADMIN_USER=admin
+        - GF_SECURITY_ADMIN_PASSWORD=p@ssw0rd
+        - GF_SERVER_HTTP_PORT=3003
+          #- GF_SERVER_DOMAIN=smtp.office365.com
+          #- GF_SMTP_ENABLED=true
+          #- GF_SMTP_HOST=smtp.office365.com:587
+          #- GF_SMTP_USER=notification@adoptnet.tech
+          #- GF_SMTP_PASSWORD=Ad0pt@@2409
+          #- GF_SMTP_FROM_ADDRESS=notification@adoptnet.tech
+      depends_on:
+        - prometheus
+
+    prometheus:
+      container_name: ivr-prometheus-container
+      image: unifyxcess/prometheus:latest
+      network_mode: "host"  
+      expose:
+        - 9098
+       #ports:
+       # - 9098:9090
+      volumes:
+        - /root/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+          # - prometheus-storage:/prometheus
+        - "/etc/localtime:/etc/localtime:ro"
+    mongodb-exporter:
+      image: percona/mongodb_exporter:0.47.1
+      container_name: mongodb-exporter
+      restart: always
+      network_mode: host
+      environment:
+        MONGODB_USER: mongoexporter
+        MONGODB_PASSWORD: exporterSecret
+      command:
+        - '--mongodb.uri=mongodb://127.0.0.1:27017/admin'
+        - '--collect-all'
+        - '--compatible-mode'
+        - '--web.listen-address=:9216'
+
+    freeswitch-exporter:
+      image: freeswitch_exporter_local:latest
+      container_name: freeswitch-exporter
+      network_mode: host
+      environment:
+        FS_HOST: 127.0.0.1
+        FS_PORT: 8021
+        FS_PASS: ClueCon
+      command:
+        [
+          "--web.listen-address=:9282",
+          "--freeswitch.scrape-uri=tcp://127.0.0.1:8021",
+          "--freeswitch.password=ClueCon"
+        ]
+      restart: unless-stopped
+      labels:
+        maintainer: "unifyxcess DevOps Team"
+        project: "FreeSWITCH Monitoring"
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "10m"
+          max-file: "3"
+    token-refresher:
+      container_name: ivr-crm-token-refresher-container
+      image: unifyxcess/ivr-crm-refresh-token-image:V1.2
+      volumes:
+        - /root/docker/token:/app/token
+      restart: always
+      environment:
+        - ACCESS_TOKEN_FILE=/app/token/access_token.txt
+        - LOGIN_URL=https://216.48.180.92:38125/api/v1/SavbillCommonGateway/login
+        - REFRESH_URL=https://216.48.180.92:38125/api/v1/SavbillCommonGateway/refreshtoken
+        - USERNAME=admin
+        - PASSWORD=admin@123
+        - REFRESH_INTERVAL=1500     
+
+volumes:
+   dbdata:
+
+     #networks:
+     #unifyxcess-network:
