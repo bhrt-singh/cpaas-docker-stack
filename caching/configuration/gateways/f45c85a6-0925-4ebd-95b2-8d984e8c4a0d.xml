@@ -1,3 +1,4 @@
+<!--
 <gateways>
 <gateway name="KenyaPRI">
 <param name="username" value="" />
@@ -32,3 +33,4 @@
 <param name="retry-seconds" value="0" />
 </gateway>
 </gateways>
+-->
