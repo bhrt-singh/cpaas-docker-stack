@@ -9,9 +9,9 @@
   <!-- http://wiki.freeswitch.org/wiki/Sofia_Configuration_Files -->
   <!--aliases are other names that will work as a valid profile name for this profile-->
   <aliases>
-   
-        <alias name="xcess.savannafibre.co.ke"/>
-
+    <!--
+        <alias name="default"/>
+    -->
   </aliases>
   <!-- Outbound Registrations -->
   <gateways>
@@ -22,7 +22,7 @@
     <!--<domain name="$${domain}" parse="true"/>-->
     <!-- indicator to parse the directory for domains with parse="true" to get gateways and alias every domain to this profile -->
     <!--<domain name="all" alias="true" parse="true"/>-->
-    <domain name="$${local_ip_v4}" alias="true" parse="true"/>
+    <domain name="all" alias="true" parse="false"/>
   </domains>
 
   <settings>
@@ -45,7 +45,7 @@
 
     <!-- Can be set to "_undef_" to remove the User-Agent header -->
     <!-- <param name="user-agent-string" value="FreeSWITCH Rocks!"/> -->
-<param name="force-register-domain" value="xcess.savannafibre.co.ke"/>
+
     <param name="debug" value="0"/>
     <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->
     <!-- <param name="shutdown-on-fail" value="true"/> -->
@@ -192,7 +192,7 @@
     <!--<param name="sip-subscribe-respond-200-ok" value="true"/>-->
 
     <!-- TLS: disabled by default, set to "true" to enable -->
-    <param name="tls" value="true"/>
+    <param name="tls" value="$${internal_ssl_enable}"/>
     <!-- Set to true to not bind on the normal sip-port but only on the TLS port -->
     <param name="tls-only" value="false"/>
     <!-- additional bind parameters for TLS -->
@@ -293,8 +293,8 @@
          auto                  - Use guessed ip.
          auto-nat              - Use ip learned from NAT-PMP or UPNP
     -->
-    <param name="ext-rtp-ip" value="$${external_rtp_ip}"/>
-    <param name="ext-sip-ip" value="$${external_sip_ip}"/>
+    <param name="ext-rtp-ip" value="$${local_ip_v4}"/>
+    <param name="ext-sip-ip" value="$${local_ip_v4}"/>
 
     <!-- rtp inactivity timeout -->
     <param name="rtp-timeout-sec" value="300"/>
@@ -315,7 +315,7 @@
     <param name="force-subscription-domain" value="$${domain}"/>
     <!--all inbound reg will stored in the db using this domain -->
     <param name="force-register-db-domain" value="$${domain}"/>
-    
+
 
     <!-- for sip over websocket support -->
     <param name="ws-binding"  value=":5066"/>
@@ -323,8 +323,7 @@
     <!-- for sip over secure websocket support -->
     <!-- You need wss.pem in $${certs_dir} for wss or one will be created for you -->
     <param name="wss-binding" value=":7443"/>
-    <param name='tls-cert-dir' value='/usr/local/freeswitch/certs/' />
-    <param name="tls-cert-file" value="wss.pem"/>
+
     <!--<param name="delete-subs-on-register" value="false"/>-->
 
     <!-- launch a new thread to process each new inbound register when using heavier backends -->
