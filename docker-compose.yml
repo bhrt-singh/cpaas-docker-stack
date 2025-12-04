@@ -3,7 +3,7 @@ services:
 
     mongo:
       container_name: ivr-mongo-container
-      image: unifyxcess/ivr-database-mongo-image:V1.13
+      image: unifyxcess/ivr-database-mongo-image:V1.13 
       restart: always
       hostname: mongo1
       network_mode: "host"
@@ -88,7 +88,7 @@ services:
  
     backend:
       container_name: ivr-backend-container
-      image: unifyxcess/ivr-backend-image:V1.48
+      image: unifyxcess/ivr-backend-image:V1.63
       restart: always
       depends_on:
        freeswitch:
@@ -167,7 +167,7 @@ services:
     
     gui:
       container_name: ivr-gui-container
-      image: unifyxcess/ivr-frontend-image:V1.115
+      image: unifyxcess/ivr-frontend-image:V1.112
       restart: always
       network_mode: "host"
         # ports:
